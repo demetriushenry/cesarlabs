@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Morse Code decoding</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"
+            integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ=="
+            crossorigin="anonymous"></script>
+    <style>
+        body {
+            background-color: lightgray;
+            margin: 40px;
+        }
+
+        h1 {
+            color: blue;
+        }
+
+        p {
+            color: white;
+            font-weight: bold;
+        }
+
+        button {
+            margin-top: 10px;
+        }
+
+        .btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
+            background-color: darkorange !important;
+        }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function () {
+            let namespace = '/decode_morse_code';
+            const socket = io(namespace);
+
+            socket.on('connect', function () {
+                console.log('Socket connected');
+            });
+
+            socket.on('result', function (result) {
+                $('#output').val(result.result);
+            });
+
+            $('#decodeCode').on('click', function () {
+                let morseCode = $('#textarea').val().trim();
+                socket.emit('decode', morseCode);
+            });
+        });
+    </script>
+</head>
+<body>
+<div>
+    <h2>Morse Code decoding</h2>
+</div>
+
+<div>
+    <p>morse_codes = {
+        '.-': 'A',
+        '-...': 'B',
+        '-.-.': 'C',
+        '-..': 'D',
+        '.': 'E',
+        '..-.': 'F',
+        '--.': 'G',
+        '....': 'H',
+        '..': 'I',
+        '.---': 'J',
+        '-.-': 'K',
+        '.-..': 'L',
+        '--': 'M',
+        '-.': 'N',
+        '---': 'O',
+        '.--.': 'P',
+        '--.-': 'Q',
+        '.-.': 'R',
+        '...': 'S',
+        '-': 'T',
+        '..-': 'U',
+        '...-': 'V',
+        '.--': 'W',
+        '-..-': 'X',
+        '-.--': 'Y',
+        '--..': 'Z',
+        '.----': '1',
+        '..---': '2',
+        '...--': '3',
+        '....-': '4',
+        '.....': '5',
+        '-....': '6',
+        '--...': '7',
+        '---..': '8',
+        '----.': '9',
+        '-----': '10'
+    }</p>
+</div>
+
+<div class="form-group">
+    <textarea class="form-control" id="textarea" rows="3"
+              placeholder="Insert morse code here. eg. '... --- ...'"></textarea>
+    <button id="decodeCode" type="submit" class="btn btn-primary mb-2">Decode</button>
+</div>
+
+<div class="form-group">
+    <label for="textarea">Output</label>
+    <label for="output"></label><textarea class="form-control" id="output" rows="3"></textarea>
+</div>
+</body>
+</html>

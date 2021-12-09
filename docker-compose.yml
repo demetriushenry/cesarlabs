@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+
+  app:
+    build: .
+    image: &app cesarlabs
+    restart: "no"
+    command: bash -c "python app.py"
+    env_file:
+      &envfile
+      - .env
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/cesarlabs
+    environment:
+      - FLASK_APP=cesarlabs
+    links:
+      - broker:redis
+    depends_on:
+      - broker
+
+  worker:
+    build: .
+    image: *app
+    restart: "no"
+    env_file: *envfile
+    command: celery -A app.celery worker --loglevel=info -n worker1.%h
+    volumes:
+      - .:/cesarlabs
+    environment:
+      - FLASK_APP=cesarlabs
+    depends_on:
+      - broker
+
+  beat:
+    build: .
+    image: *app
+    restart: "no"
+    env_file: *envfile
+    command: celery -A app.celery beat -l info
+    volumes:
+      - .:/cesarlabs
+    environment:
+      - FLASK_APP=cesarlabs
+    depends_on:
+      - broker
+
+  flower:
+    build: .
+    image: *app
+    restart: "no"
+    env_file: *envfile
+    command: celery -A app.celery inspect ping
+    volumes:
+      - .:/cesarlabs
+    environment:
+      - FLASK_APP=cesarlabs
+    ports:
+      - "5557:5555"
+    depends_on:
+      - broker
+
+  broker:
+    image: redis
+    env_file: *envfile
+    command: redis-server
+    expose:
+      - "6379"
+    ports:
+      - "6379:6379"

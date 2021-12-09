@@ -1,0 +1,18 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+flask = "*"
+celery = "*"
+flask-socketio = "*"
+redis = "*"
+jinja2 = "*"
+flask-celeryext = "*"
+
+[dev-packages]
+pytest = "*"
+
+[requires]
+python_version = "3.9"

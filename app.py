@@ -50,7 +50,7 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/api/v1/morse_decode', methods=['GET', 'POST'])
+@app.route('/api/morse_decode', methods=['GET', 'POST'])
 def morse_decoding():
     """
     Decodes the morse code from request.
